@@ -19,10 +19,10 @@ const Dashboard = () => {
     <div>
       <Header onViewChange={setView} onCampusChange={setCampus} user={user} />
       <div className="dashboard-content">
-        <h2>{view} View</h2>
         <p>
-          Campus: {campus} | {startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}
+        <strong>{view}</strong> View , Campus: {campus} | {startDate} - {endDate}
         </p>
+        {/* {console.log(data)} */}
         <ChartComponent data={data} />
       </div>
     </div>

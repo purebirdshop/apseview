@@ -1,17 +1,23 @@
+// src/components/ChartComponent.jsx
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import SingleChart from './SingleChart';
+import { formatBlockName } from '../utils/helper';
 
 const ChartComponent = ({ data }) => {
+  if (!data || !data.records) return <p>No data available.</p>;
+
+  const blocks = Object.entries(data.records); // [ ['adults', {...}], ['kids', {...}], ... ]
+
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
-        <Line type="monotone" dataKey="value" stroke="#8884d8" />
-      </LineChart>
-    </ResponsiveContainer>
+    <div className="charts-container">
+      {blocks.map(([blockName, blockData]) => (
+        <SingleChart
+          key={blockName}
+          name={formatBlockName(blockName)}
+          categories={blockData.categories || {}}
+        />
+      ))}
+    </div>
   );
 };
 

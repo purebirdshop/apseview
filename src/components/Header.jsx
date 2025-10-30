@@ -74,7 +74,7 @@ const Header = ({ user, onViewChange, onCampusChange }) => {
         <select value={activeCampus} onChange={handleCampusChange}>
           {Array.isArray(campuses) && campuses.length > 0 ? (
             campuses.map((campus) => (
-              <option key={campus.id || campus.name} value={campus.name}>
+              <option key={campus.id || campus.name} value={campus.metrics.id}>
                 {campus.name}
               </option>
             ))

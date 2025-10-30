@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { verifyUser, fetchDashboardData } from '../services/api';
+import formatDate from '../utils/helper'
 
 export const useDashboard = () => {
   const [searchParams] = useSearchParams();
@@ -14,12 +15,12 @@ export const useDashboard = () => {
   const [user, setUser] = useState(null);
   const [view, setView] = useState(searchParams.get('view') || 'All');
   const [campus, setCampus] = useState(searchParams.get('campus') || 'Main');
-  const [startDate, setStartDate] = useState(
-    searchParams.get('startDate') ? new Date(searchParams.get('startDate')) : yesterday
-  );
-  const [endDate, setEndDate] = useState(
-    searchParams.get('endDate') ? new Date(searchParams.get('endDate')) : today
-  );
+const [startDate, setStartDate] = useState(
+  searchParams.get('startDate') || formatDate(yesterday)
+);
+const [endDate, setEndDate] = useState(
+  searchParams.get('endDate') || formatDate(today)
+);
   const [data, setData] = useState([]);
 
   // Verify user on mount
@@ -37,8 +38,8 @@ export const useDashboard = () => {
     const params = new URLSearchParams({
       view,
       campus,
-      startDate: startDate.toISOString().split('T')[0],
-      endDate: endDate.toISOString().split('T')[0],
+      startDate: startDate,
+      endDate: endDate
     });
     navigate(`?${params.toString()}`, { replace: true });
   }, [view, campus, startDate, endDate, navigate]);
