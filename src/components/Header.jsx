@@ -1,67 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { fetchCampuses } from '../services/api';
-import '../App.css'; // optional CSS for styling
+import logo from '../assets/apse-color-logo.png';
+import '../App.css';
 
-const Header = ({ user, onViewChange, onCampusChange }) => {
+const Header = ({ user, onViewChange }) => {
   const [activeView, setActiveView] = useState('All');
   const [campuses, setCampuses] = useState([]);
-  const [activeCampus, setActiveCampus] = useState('');
+  const [selectedCampusId, setSelectedCampusId] = useState(109844);
 
-  // Handle view button clicks
   const handleViewClick = (view) => {
     setActiveView(view);
     if (onViewChange) onViewChange(view);
   };
 
-  // Fetch campuses on mount
   useEffect(() => {
     const loadCampuses = async () => {
       try {
         const result = await fetchCampuses();
 
-        console.log('Raw campuses API response:', result); 
-
-        // Normalize the response to always be an array
         const campusArray = Array.isArray(result)
           ? result
           : result?.records || result?.data || [];
 
         setCampuses(campusArray);
-
-        /* 
-        left off here... trying to get campus id passed, instead ofcampus name. 
-        Although, we really need to pass both ids. Or we need to build our own
-        json object that is just the service, and its ids.
-        */
-        if (campusArray.length > 0) {
-          setActiveCampus(campusArray[0].metrics.id || campusArray[0]);
-          console.log(campusArray[0].metrics.id)
-          if (onCampusChange) onCampusChange(campusArray[0].metrics.id || campusArray[0]);
-        }
       } catch (err) {
         console.error('Error loading campuses:', err);
-        setCampuses([]); // fallback to empty array
+        setCampuses([]);
       }
     };
 
     loadCampuses();
-  }, [onCampusChange]);
-
-  // Handle campus selection change
-  const handleCampusChange = (e) => {
-    const newCampus = e.target.value;
-    setActiveCampus(newCampus);
-    if (onCampusChange) onCampusChange(newCampus);
-  };
+  }, []);
 
   return (
     <header className="header">
       <div className="logo-left">
-        <h3>Client Logo</h3>
+        <img alt="View the Apse" src={logo} />
       </div>
 
       <nav className="nav">
-        {['All', 'Region', 'Campus'].map((view) => (
+        {[
+          // 'All',
+          // 'Region',
+          'Campus'
+        ].map((view) => (
           <button
             key={view}
             className={`nav-button ${activeView === view ? 'active' : ''}`}
@@ -71,7 +53,10 @@ const Header = ({ user, onViewChange, onCampusChange }) => {
           </button>
         ))}
 
-        <select value={activeCampus} onChange={handleCampusChange}>
+        <select
+          value={selectedCampusId}
+          onChange={(e) => setSelectedCampusId(Number(e.target.value))}
+        >
           {Array.isArray(campuses) && campuses.length > 0 ? (
             campuses.map((campus) => (
               <option key={campus.id || campus.name} value={campus.metrics.id}>
@@ -86,9 +71,7 @@ const Header = ({ user, onViewChange, onCampusChange }) => {
 
       <div className="logo-right user-info">
         {user ? (
-          <p>
-            {user.user?.name || user.user?.email || 'Unknown User'}
-          </p>
+          <p>{user.user?.name || user.user?.email || 'Unknown User'}</p>
         ) : (
           <p>Loading user...</p>
         )}

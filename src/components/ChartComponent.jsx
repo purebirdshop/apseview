@@ -1,6 +1,5 @@
-// src/components/ChartComponent.jsx
-import React from 'react';
-import SingleChart from './SingleChart';
+import SingleBarChart from './SingleBarChart';
+import SingleHalfPieChart from './SingleHalfPieChart'
 import { formatBlockName } from '../utils/helper';
 
 const ChartComponent = ({ data }) => {
@@ -11,8 +10,8 @@ const ChartComponent = ({ data }) => {
   return (
     <div className="charts-container">
       {blocks.map(([blockName, blockData]) => (
-        <SingleChart
-          key={blockName}
+        <SingleHalfPieChart
+          // key={blockName}
           name={formatBlockName(blockName)}
           categories={blockData.categories || {}}
         />

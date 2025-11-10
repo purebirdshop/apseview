@@ -20,12 +20,13 @@ export const verifyUser = async (email) => {
 // export const fetchDashboardData = async (campus, startDate, endDate, view) => {
 export const fetchDashboardData = async (campus,startDate) => {
   try {
-    const res = await axios.get(`${API_BASE_URL}/api/metrics/filtered-records`, {
+    const res = await axios.get(`${API_BASE_URL}/api/metrics/all-records-by-campus-grouped`, {
       params: {
         campus_id:campus,
         date:startDate
       },
     });
+
     return res.data;
   } catch (error) {
     console.error('Error fetching dashboard data:', error);

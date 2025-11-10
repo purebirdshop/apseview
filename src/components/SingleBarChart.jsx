@@ -1,15 +1,13 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const SingleChart = ({ name, categories }) => {
+const SingleBarChart = ({ name, categories }) => {
   // Convert categories object into an array suitable for Recharts
   const data = Object.entries(categories).map(([categoryId, value]) => ({
     category: categoryId,
     name:name,
     value,
   }));
-
-  console.log(data)
   return (
     <div style={{ marginBottom: '1rem' }}>
       <h3>{name}</h3>
@@ -26,4 +24,4 @@ const SingleChart = ({ name, categories }) => {
   );
 };
 
-export default SingleChart;
+export default SingleBarChart;
