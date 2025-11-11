@@ -56,8 +56,6 @@ export const capsFirstLetter = (string) => {
 
 export const sumTotals = (data) => {
   let sum = 0;
-  console.log(`sumtotals data: `)
-  console.log(data)
 
   // Helper function to recursively walk through object/array
   function traverse(node) {

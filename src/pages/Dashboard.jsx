@@ -1,28 +1,20 @@
 import Header from '../components/Header.jsx';
 import DonutChart from '../components/DonutChart.jsx';
 import GroupBarChart from '../components/GroupBarChart.jsx';
-import { useDashboard } from '../hooks/useDashboard.js';
+// import { useDashboard } from '../hooks/useDashboard.js';
 import ClipLoader from 'react-spinners/ClipLoader'; // Progress spinner
 
-const Dashboard = () => {
-
-  const {
-    user,
-    view,
-    setView,
+const Dashboard = (view,
     campus,
-    setCampus,
     startDate,
     endDate,
     loading,
     groupBarData,
     groupTotals,
-    grandTotalData
-  } = useDashboard();
+    grandTotalData) => {
 
   return (
     <div>
-      <Header onViewChange={setView} onCampusChange={setCampus} user={user} />
 
       <div className="dashboard-content" id="content" >
         {loading ? (

@@ -5,7 +5,7 @@ import { months } from "../utils/helper";
 import logo from "../assets/apse-color-logo.png";
 import "../App.css";
 
-const Header = ({ 
+const Footer = ({ 
 	user, 
 	onCampusChange, 
 	onDateChange
@@ -223,4 +223,4 @@ const handleViewClick = (view) => {
 	);
 };
 
-export default Header;
+export default Footer;

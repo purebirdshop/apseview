@@ -18,12 +18,15 @@ export const verifyUser = async (email) => {
 };
 
 // export const fetchDashboardData = async (campus, startDate, endDate, view) => {
-export const fetchDashboardData = async (campus,startDate) => {
+export const fetchDashboardData = async (campus,startDate,endDate) => {
   try {
     const res = await axios.get(`${API_BASE_URL}/api/metrics/all-records-by-campus-grouped`, {
       params: {
         campus_id:campus,
-        date:startDate
+        startDate,
+        // startDate:startDate,
+        endDate
+        // endDate:endDate
       },
     });
 
