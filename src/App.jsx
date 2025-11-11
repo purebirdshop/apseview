@@ -10,6 +10,7 @@ import { useDashboard } from "./hooks/useDashboard.js";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import TermsOfService from "./pages/TermsOfService.jsx";
 import "./App.css";
+import Footer from "./components/Footer.jsx";
 
 // Protected route
 const ProtectedRoute = ({ user, children }) => {
@@ -53,9 +54,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacy" element={<PrivacyPolicy /> } />
         <Route path="/privacy-policy" element={<PrivacyPolicy /> } />
-        <Route path="/terms" element={<TermsOfService /> } />
-        <Route path="/tos" element={<TermsOfService /> } />
-
+        <Route path="/terms-of-service" element={<TermsOfService /> } />
         <Route
           path="/dashboard"
           element={
@@ -79,6 +78,7 @@ function App() {
           element={<Navigate to={user ? "/dashboard" : "/login"} replace />}
         />
       </Routes>
+      <Footer />
     </div>
   );
 }
