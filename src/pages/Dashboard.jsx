@@ -1,38 +1,41 @@
-import Header from '../components/Header.jsx';
 import DonutChart from '../components/DonutChart.jsx';
 import GroupBarChart from '../components/GroupBarChart.jsx';
-// import { useDashboard } from '../hooks/useDashboard.js';
 import ClipLoader from 'react-spinners/ClipLoader'; // Progress spinner
 
-const Dashboard = (view,
-    campus,
-    startDate,
-    endDate,
-    loading,
-    groupBarData,
-    groupTotals,
-    grandTotalData) => {
-
+const Dashboard = ({
+  view,
+  campus,
+  startDate,
+  endDate,
+  loading,
+  groupBarData = {},
+  groupTotals = [],
+  grandTotalData = 0
+}) => {
   return (
     <div>
-
-      <div className="dashboard-content" id="content" >
+      <div className="dashboard-content" id="content">
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', minHeight:'768px', padding: '4rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', minHeight: '768px', padding: '4rem' }}>
             <ClipLoader color="#3498db" size={60} />
           </div>
-        ) : groupTotals.length > 0 ? (
+        ) : groupTotals && groupTotals.length > 0 ? (
           <>
             <p>
-              <strong>{view}</strong> View , Campus: {campus} | {startDate} - {endDate}
+              <strong>{view}</strong> View, Campus: {campus} | {startDate || "—"} - {endDate || "—"}
             </p>
 
-            <div style={{width:"100%", display:"flex", flexWrap:"wrap"}}>
+            <div style={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
               <DonutChart donutData={groupTotals} grandTotal={grandTotalData} />
-              <div style={{width:"50%",display:"flex",flexWrap:"wrap"}}>
-                {Object.entries(groupBarData).map(([groupName, categories]) => ((
-                  <GroupBarChart key={groupName} groupBarData={categories} groupName={groupName} />
-                )))}
+              
+              <div style={{ width: "50%", display: "flex", flexWrap: "wrap" }}>
+                {Object.entries(groupBarData).map(([groupName, categories]) => (
+                  <GroupBarChart
+                    key={groupName}
+                    groupName={groupName}
+                    groupBarData={categories} // expects [{ name, total }, ...]
+                  />
+                ))}
               </div>
             </div>
           </>

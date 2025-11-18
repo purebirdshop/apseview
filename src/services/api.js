@@ -4,18 +4,14 @@ const API_BASE_URL = import.meta.env.VITE_VERCEL_BASE_URL
 
 export const verifyUser = async (email) => {
   try {
-    const res = await axios.get(`${API_BASE_URL}/api/metrics/verify-user`, {
-      // /api/metrics/verify-user?email=drmatt@awakenchurch.com
-      params:{
-        email:email
-      }
-    });
-    return res.data; // whatever the API returns
+    const res = await axios.post(`${API_BASE_URL}/api/connection`, { email });
+    return res.data;
   } catch (error) {
-    console.error('Error verifying user:', error);
-    return null;
+    console.error("Error verifying user:", error);
+    return { success: false };
   }
 };
+
 
 // export const fetchDashboardData = async (campus, startDate, endDate, view) => {
 export const fetchDashboardData = async (campus,startDate,endDate) => {
@@ -24,9 +20,7 @@ export const fetchDashboardData = async (campus,startDate,endDate) => {
       params: {
         campus_id:campus,
         startDate,
-        // startDate:startDate,
         endDate
-        // endDate:endDate
       },
     });
 

@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 
 const Login = ({ onLogin }) => {
   useEffect(() => {
-    console.log(window.google.accounts.id)
     /* globalgoogle */
     // Initialize Google Identity Services
     window.google.accounts.id.initialize({

@@ -5,222 +5,205 @@ import { months } from "../utils/helper";
 import logo from "../assets/apse-color-logo.png";
 import "../App.css";
 
-const Header = ({ 
-	user, 
-	onCampusChange, 
-	onDateChange
-}) => {
-	const [activeView, setActiveView] = useState("All");
-	const [campuses, setCampuses] = useState([]);
-	const [selectedCampus, setSelectedCampus] = useState(null);
+const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
+  const [activeView, setActiveView] = useState("All");
+  const [campuses, setCampuses] = useState([]);
+  const [selectedCampus, setSelectedCampus] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-	const [startDate, setStartDate] = useState(null);
-	const [endDate, setEndDate] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-	const navigate = useNavigate();
-	const location = useLocation();
+  let navClass;
+  const getCampusFromUrl = () => {
+    const params = new URLSearchParams(location.search);
+    const campus = params.get("campus");
+    return campus ? Number(campus) : null;
+  };
 
-	// ------------------ URL Helpers ------------------
-	const getCampusFromUrl = () => {
-		const params = new URLSearchParams(location.search);
-		const campus = params.get("campus");
-		return campus ? Number(campus) : null;
-	};
+  const getDateFromUrl = () => {
+    const params = new URLSearchParams(location.search);
+    const start = params.get("startDate");
+    const end = params.get("endDate");
+    return { startDate: start, endDate: end };
+  };
 
-	const getDateFromUrl = () => {
-		const params = new URLSearchParams(location.search);
-		const start = params.get("startDate");
-		const end = params.get("endDate");
-		return { startDate: start, endDate: end };
-	};
+  const updateUrlParams = ({ campus, start, end }) => {
+    const params = new URLSearchParams(location.search);
+    if (campus) params.set("campus", campus);
+    else params.delete("campus");
 
-	const updateUrlParams = ({ campus, start, end }) => {
-		const params = new URLSearchParams(location.search);
-		if (campus) params.set("campus", campus);
-		else params.delete("campus");
+    if (start) params.set("startDate", start);
+    else params.delete("startDate");
 
-		if (start) params.set("startDate", start);
-		else params.delete("startDate");
+    if (end) params.set("endDate", end);
+    else params.delete("endDate");
 
-		if (end) params.set("endDate", end);
-		else params.delete("endDate");
+    navigate({ search: params.toString() }, { replace: true });
+  };
 
-		navigate({ search: params.toString() }, { replace: true });
-	};
+  const handleCampusChange = (e) => {
+    const newCampus = Number(e.target.value);
+    setSelectedCampus(newCampus);
+    updateUrlParams({ campus: newCampus, start: startDate, end: endDate });
+    if (onCampusChange) onCampusChange(newCampus);
+  };
 
-	// ------------------ Campus ------------------
-	const handleCampusChange = (e) => {
-		const newCampus = Number(e.target.value);
-		setSelectedCampus(newCampus);
-		updateUrlParams({ campus: newCampus, start: startDate, end: endDate });
-		if (onCampusChange) onCampusChange(newCampus);
-	};
+  const handleMonthChange = (direction) => {
+    if (!startDate) return;
+    const [yearStr, monthStr] = startDate.split("-");
+    let year = parseInt(yearStr, 10);
+    let month = parseInt(monthStr, 10) + 1;
 
-	// ------------------ Month ------------------
-	const handleMonthChange = (direction) => {
-		if (!startDate) return;
-		console.log(direction)
-		const [yearStr, monthStr] = startDate.split("-"); // YYYY-MM-DD
-		let year = parseInt(yearStr, 10);
-		let month = parseInt(monthStr, 10) - 1; // 0-indexed
+    month += direction;
 
-		// move month by direction
-		month += direction;
+    if (month < 0) {
+      month = 11;
+      year -= 1;
+    } else if (month > 11) {
+      month = 0;
+      year += 1;
+    }
 
-		// handle year overflow/underflow
-		if (month < 0) {
-			month = 11;
-			year -= 1;
-		} else if (month > 11) {
-			month = 0;
-			year += 1;
-		}
+    const newStart = new Date(year, month, 1).toISOString().split("T")[0];
+    const newEnd = new Date(year, month + 1, 1).toISOString().split("T")[0];
 
-		// calculate start and end of month
-		const newStart = new Date(year, month, 1).toISOString().split("T")[0];
-		const newEnd = new Date(year, month + 1, 0).toISOString().split("T")[0];
+    setStartDate(newStart);
+    setEndDate(newEnd);
 
-		setStartDate(newStart);
-		setEndDate(newEnd);
+    updateUrlParams({ campus: selectedCampus, start: newStart, end: newEnd });
+    if (onDateChange) onDateChange(newStart, newEnd);
+  };
 
-		updateUrlParams({
-			campus: selectedCampus,
-			start: newStart,
-			end: newEnd,
-		});
+  useEffect(() => {
+    const loadCampuses = async () => {
+      try {
+        const result = await fetchCampuses();
+        const campusArray = Array.isArray(result)
+          ? result
+          : result?.records || result?.data || [];
+        setCampuses(campusArray);
+      } catch (err) {
+        console.error("Error loading campuses:", err);
+        setCampuses([]);
+      }
+    };
+    loadCampuses();
+  }, []);
 
-		if (onDateChange) onDateChange(newStart, newEnd);
-	};
+  useEffect(() => {
+    const urlCampus = getCampusFromUrl();
+    const { startDate: urlStart, endDate: urlEnd } = getDateFromUrl();
 
-	// ------------------ Initial Load ------------------
-	useEffect(() => {
-		const loadCampuses = async () => {
-			try {
-				const result = await fetchCampuses();
-				const campusArray = Array.isArray(result)
-					? result
-					: result?.records || result?.data || [];
-				setCampuses(campusArray);
-			} catch (err) {
-				console.error("Error loading campuses:", err);
-				setCampuses([]);
-			}
-		};
-		loadCampuses();
-	}, []);
+    if (urlCampus) setSelectedCampus(urlCampus);
+    else if (user?.campus_id) setSelectedCampus(user.campus_id);
 
-	useEffect(() => {
-		const urlCampus = getCampusFromUrl();
-		const { startDate: urlStart, endDate: urlEnd } = getDateFromUrl();
+    const now = new Date();
+    let initialStart = urlStart
+      ? new Date(urlStart)
+      : new Date(now.getFullYear(), now.getMonth(), 1);
+    let initialEnd = urlEnd
+      ? new Date(urlEnd)
+      : new Date(initialStart.getFullYear(), initialStart.getMonth() + 1, 0);
 
-		// Campus
-		if (urlCampus) setSelectedCampus(urlCampus);
-		else if (user?.campus_id) setSelectedCampus(user.campus_id);
+    if (initialEnd.getFullYear() !== initialStart.getFullYear() || initialEnd.getMonth() !== initialStart.getMonth()) {
+      initialEnd = new Date(initialStart.getFullYear(), initialStart.getMonth() + 1, 0);
+    }
 
-		// Month
-		const now = new Date();
-		let initialStart = urlStart
-			? new Date(urlStart)
-			: new Date(now.getFullYear(), now.getMonth(), 1);
-		let initialEnd = urlEnd
-			? new Date(urlEnd)
-			: new Date(initialStart.getFullYear(), initialStart.getMonth() + 1, 0);
+    const newStartStr = initialStart.toISOString().split("T")[0];
+    const newEndStr = initialEnd.toISOString().split("T")[0];
 
-		// Ensure only a single month span
-		if (
-			initialEnd.getFullYear() !== initialStart.getFullYear() ||
-			initialEnd.getMonth() !== initialStart.getMonth()
-		) {
-			initialEnd = new Date(initialStart.getFullYear(), initialStart.getMonth() + 1, 0);
-		}
+    setStartDate(newStartStr);
+    setEndDate(newEndStr);
 
-		const newStartStr = initialStart.toISOString().split("T")[0];
-		const newEndStr = initialEnd.toISOString().split("T")[0];
+    if (onDateChange) onDateChange(newStartStr, newEndStr);
+  }, [user]);
 
-		setStartDate(newStartStr);
-		setEndDate(newEndStr);
+  const publicNav = ["About", "Contact"];
+  const authNav = ["Dashboard" , "Services", "Contact"];
+  const navItems = user ? authNav : publicNav;
 
-		if (onDateChange) onDateChange(newStartStr, newEndStr);
-	}, [user]); // <-- only run on initial load
+  const skipped = ["Test", "Mission Valley Campus"];
 
-	// ------------------ Views ------------------
-const handleViewClick = (view) => {
+  const handleViewClick = (view) => {
     setActiveView(view);
 
-    // Map button labels to routes
     const routeMap = {
       About: "/about",
-      Login: "/login",
       Contact: "/contact",
-      Dashboard: "/", // assuming "Campus" is your dashboard
+	    Services: "/services",
+      Dashboard: "/dashboard",
     };
 
     const path = routeMap[view];
     if (path) navigate(path);
   };
 
+  const handleConnectClick = () => {
+    if (user) {
+      if (onLogout) onLogout();
+      navigate("/connection");
+    } else {
+      navigate("/connection");
+    }
+  };
 
-	const skipped = ["Test", "Mission Valley Campus"];
+	{user ? navClass="nav-button log-out" : navClass="nav-button  log-in"}
 
-	// ------------------ Render ------------------
-	return (
-		<header className="header">
-			<div className="logo-left">
-				<img alt="View the Apse" src={logo} />
-			</div>
+  return (
+    <header className="header">
+      <nav className="nav">
+        <div className="logo-left">
+          <img alt="View the Apse" src={logo} />
+        </div>
+        {user && (
+          <div className="nav-center">
+            <select name="campus-selector" className="campus-selector" value={selectedCampus || ""} onChange={handleCampusChange} disabled={!campuses.length}>
+              {campuses.length > 0 ? (
+                campuses
+                  .filter((campus) => !skipped.includes(campus.name))
+                  .map((campus) => (
+                    <option key={campus.id || campus.metrics.id} value={campus.metrics?.id || campus.id}>
+                      {campus.name}
+                    </option>
+                  ))
+              ) : (
+                <option disabled>Loading Campuses...</option>
+              )}
+            </select>
 
-			<nav className="nav">
-				{[
-					"About",
-					"Login",
-					"Contact",
-					"Dashboard"
-				].map((view) => (
-					<button
-						key={view}
-						className={`nav-button ${activeView === view ? "active" : ""}`}
-						onClick={() => handleViewClick(view)}
-					>
-						{view}
-					</button>
-				))}
+            <div className="month-selector">
+              <button onClick={() => handleMonthChange(-1)}>&lt;</button>
+              <span style={{ padding: "10px" }}>
+                {startDate ? months[new Date(startDate).getMonth()] + " " + new Date(startDate).getFullYear() : ""}
+              </span>
+              <button onClick={() => handleMonthChange(1)}>&gt;</button>
+            </div>
+          </div>
+        )}
 
-				{/* Campus Dropdown */}
-				<select value={selectedCampus || ""} onChange={handleCampusChange} disabled={!campuses.length}>
-					{campuses.length > 0 ? (
-						campuses
-							.filter((campus) => !skipped.includes(campus.name))
-							.map((campus) => (
-								<option key={campus.id || campus.metrics.id} value={campus.metrics?.id || campus.id}>
-									{campus.name}
-								</option>
-							))
-					) : (
-						<option disabled>Loading Campuses...</option>
-					)}
-				</select>
+        <div className="nav-right">
+          {navItems.map((view) => (
+            <button
+              key={view}
+              className={`nav-button ${activeView === view ? "active" : ""}`}
+              onClick={() => handleViewClick(view)}
+            >
+              {view}
+            </button>
+          ))}
 
-				{/* Month Selector */}
-				<div className="month-selector">
-					<button onClick={() => handleMonthChange(-1)}>&lt;</button>
-					<span style={{padding:"10px"}}>
-						{startDate
-							? months[new Date(startDate).getMonth()] + " " + new Date(startDate).getFullYear()
-							: ""}
-					</span>
-					<button onClick={() => handleMonthChange(1)}>&gt;</button>
-				</div>
-			</nav>
-
-			<div className="logo-right user-info">
-				{user ? (
-					<p>{user.user?.name || user.user?.email || "Unknown User"}</p>
-				) : (
-					<p>Loading user...</p>
-				)}
-			</div>
-		</header>
-	);
+          <button
+          className={navClass}
+          onClick={handleConnectClick}
+          >
+          {user ? "Log Out" : "Log In"}
+          </button>
+        </div>
+      </nav>
+    </header>
+  );
 };
 
 export default Header;

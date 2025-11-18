@@ -1,4 +1,5 @@
 import React from "react";
+import logo from "../assets/apse-color-logo.png";
 import { Link } from "react-router-dom";
 import "../App.css";
 
@@ -7,6 +8,7 @@ function Footer() {
 
   return (
     <footer className="footer">
+		<div className="footer-spacer"></div>
       <div className="footer-container">
         <div className="footer-links">
           <Link to="/about" className="footer-link">About</Link>
@@ -16,9 +18,12 @@ function Footer() {
         </div>
 
         <div className="footer-copy">
-          © {year} MyCompany. All rights reserved.
+          © {year} Apse. All rights reserved.
         </div>
       </div>
+	  <div className="footer-logo">
+		<img style={{marginLeft:"0 0 0 -72px",width:"72px",height:"72px"}} alt="View the Apse" src={logo} />
+	  </div>
     </footer>
   );
 }

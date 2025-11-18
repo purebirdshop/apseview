@@ -1,23 +1,30 @@
-body{
-	/* background:#ccc; */
+html, body {
 	font-family: Arial, Helvetica, sans-serif;
-	margin:0;
-	padding:0;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
 #root {
-	margin:0;
-	padding:0;
+	margin: 0;
+	padding: 0;
 }
 
-#content {
+.app {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh; /* full viewport height */
+}
+
+.content {
+	flex: 1; /* grows to push footer down */
 	max-width: 1280px;
 	margin: 0 auto;
 	padding: 0.5rem;
 	text-align: center;
 }
 
-#document{
+#document {
 	max-width: 1024px;
 	margin: 0 auto;
 	padding: 0.5rem;
@@ -60,17 +67,16 @@ body{
 }
 
 /* CHARTS */
-.chart-label{
-	margin-bottom:-30px;
+.chart-label {
+	margin-bottom: -30px;
 }
-.inner-total{
-	margin-top:204px;
-	margin-bottom:-240px;
+.inner-total {
+	margin-top: 204px;
+	margin-bottom: -240px;
 }
 
 /* HEADER CSS */
 .header {
-	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: 10px 20px;
@@ -78,12 +84,16 @@ body{
 	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.month-selector{
-	margin-top:6px;
+.campus-selector{
+	padding:6px;
 }
 
-.month-selector > div{
-	margin:12px;
+.month-selector {
+	margin-top: 3px;
+}
+
+.month-selector > div {
+	margin: 12px;
 }
 
 .logo-left img,
@@ -95,25 +105,44 @@ body{
 .nav {
 	display: flex;
 	gap: 15px;
+	justify-content: space-between;
+	align-items: center;
+}
+.nav-center{
+	display: flex;
+	gap: 15px;
+	justify-content: space-between;
+	align-items: center;
+}
+.nav-right{
+	display: "flex";
+	align-items: "center";
+	gap: "0.5rem";
 }
 
 .nav-button {
 	background: none;
 	border: none;
 	padding: 8px 12px;
-	font-size: 16px;
+	font-size: 12px;
 	cursor: pointer;
 	color: #333;
 	border-bottom: 2px solid transparent;
 	transition: border-color 0.2s;
 }
+.nav-button.log-in {
+	font-weight: bold;
+	border-bottom: 2px solid #222;
+}
+.nav-button.log-out {
+	color:#CCC;
+}
 
 .nav-button.active,
 .nav-button:hover {
-	border-bottom: 2px solid #007bff; /* active/hover indicator */
+	border-bottom: 2px solid #007bff;
 	color: #007bff;
 }
-
 
 /* SPINNER CSS */
 .spinner-container {
@@ -147,40 +176,67 @@ body{
 	}
 }
 
+.service-status {
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+}
+.service-status.connected {
+	background-color: #34B233;
+}
+.service-status.disconnected {
+	background-color: #CCCCCC;
+}
+
 .footer {
-  background-color: #111;
-  color: #ccc;
-  padding: 1.5rem 0;
-  text-align: center;
-  font-size: 0.9rem;
-  margin-top: 2rem;
+	background-color: #111;
+	color: #ccc;
+	padding: 1.5rem 0;
+	text-align: center;
+	font-size: 0.9rem;
+	margin-top: 2rem;
+	display: flex;
+	flex-direction: row;
+}
+.footer > div {
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .footer-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	align-items: center;
+	gap: 0.75rem;
 }
 
 .footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 1.5rem;
 }
 
 .footer-link {
-  color: #ccc;
-  text-decoration: none;
-  transition: color 0.2s ease;
+	color: #ccc;
+	text-decoration: none;
+	transition: color 0.2s ease;
 }
 
 .footer-link:hover {
-  color: #fff;
+	color: #fff;
 }
 
 .footer-copy {
-  font-size: 0.85rem;
-  color: #888;
+	font-size: 0.85rem;
+	color: #888;
+}
+
+.footer-logo,
+.footer-spacer {
+	height: 72px;
+	margin: 32px;
+	width: 72px;
 }

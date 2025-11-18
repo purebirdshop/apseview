@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { COLORS } from "../utils/helper";
 
-const GroupBarChart = ({ groupBarData, groupName, loading = false }) => {
+const GroupBarChart = ({ groupBarData = [], groupName, loading = false }) => {
   const capsFirstLetter = (str) => str?.charAt(0).toUpperCase() + str?.slice(1);
 
   // Show loading state
@@ -34,7 +34,6 @@ const GroupBarChart = ({ groupBarData, groupName, loading = false }) => {
 
   // Guard for empty or invalid data
   if (!Array.isArray(groupBarData) || groupBarData.length === 0) {
-    console.log(`groupBarData: `, groupBarData)
     console.warn("GroupBarChart: data is not a valid array", groupBarData);
     return (
       <div
@@ -52,13 +51,12 @@ const GroupBarChart = ({ groupBarData, groupName, loading = false }) => {
     );
   }
 
-  // Ensure all totals are numbers (replace null/undefined/empty with 0)
+  // Ensure totals are numeric and valid
   const safeData = groupBarData.map((entry) => ({
-    ...entry,
+    name: entry.name || `Category ${entry.category_id || "N/A"}`,
     total: entry.total != null && !isNaN(entry.total) ? entry.total : 0,
   }));
 
-  // Render chart
   return (
     <div style={{ marginBottom: "1rem" }}>
       <h3 className="chart-label">{capsFirstLetter(groupName)}</h3>
