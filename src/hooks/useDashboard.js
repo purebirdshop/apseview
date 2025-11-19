@@ -16,18 +16,23 @@ export const useDashboard = (profile) => {
 
   // Extract campus from URL or fallback
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const campusParam = params.get("campus");
+            const params = new URLSearchParams(location.search);
+            const campusParam = params.get("campus");
+            const urlStart = params.get("startDate")
+            const urlEnd = params.get("endDate")
 
     // hardcoded for MVP TODO: need to fix this default campus. This should instead pull the campus from the user's authentication.
     // attempted to fix, as profile.campus_id is returning undefined half of the time...
     if (campusParam) {
       setCampus(campusParam);
     } else if (!campus) {
-      console.log(profile)
       const defaultCampus = 65637; 
       setCampus(defaultCampus);
     }
+
+    setStartDate(urlStart);
+    setEndDate(urlEnd);
+
   }, [location.search]);
   // TODO: Need. to fix this... React Hook useEffect has a missing dependency: 'campus'.
 
@@ -65,7 +70,7 @@ export const useDashboard = (profile) => {
         setGrandTotalData(records["grand-total"] || 0);
 
         // Optionally set date range
-        if (records.date_range) {
+        if ((!startDate || !endDate) && records.date_range) {
           setStartDate(records.date_range.start);
           setEndDate(records.date_range.end);
         }

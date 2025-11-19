@@ -52,9 +52,10 @@ const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
 
   const handleMonthChange = (direction) => {
     if (!startDate) return;
+
     const [yearStr, monthStr] = startDate.split("-");
-    let year = parseInt(yearStr, 10);
-    let month = parseInt(monthStr, 10) + 1;
+    let year = parseInt(yearStr, 10); 
+    let month = parseInt(monthStr, 10) - 1; // <--- FIX: zero-index
 
     month += direction;
 
@@ -67,7 +68,7 @@ const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
     }
 
     const newStart = new Date(year, month, 1).toISOString().split("T")[0];
-    const newEnd = new Date(year, month + 1, 1).toISOString().split("T")[0];
+    const newEnd = new Date(year, month + 1, 0).toISOString().split("T")[0];
 
     setStartDate(newStart);
     setEndDate(newEnd);
@@ -75,6 +76,7 @@ const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
     updateUrlParams({ campus: selectedCampus, start: newStart, end: newEnd });
     if (onDateChange) onDateChange(newStart, newEnd);
   };
+
 
   useEffect(() => {
     const loadCampuses = async () => {
@@ -176,7 +178,7 @@ const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
             <div className="month-selector">
               <button onClick={() => handleMonthChange(-1)}>&lt;</button>
               <span style={{ padding: "10px" }}>
-                {startDate ? months[new Date(startDate).getMonth()] + " " + new Date(startDate).getFullYear() : ""}
+                {`${months[new Date(startDate).getUTCMonth()]} ${new Date(startDate).getFullYear()}`}
               </span>
               <button onClick={() => handleMonthChange(1)}>&gt;</button>
             </div>

@@ -3,10 +3,6 @@ import GroupBarChart from '../components/GroupBarChart.jsx';
 import ClipLoader from 'react-spinners/ClipLoader'; // Progress spinner
 
 const Dashboard = ({
-  view,
-  campus,
-  startDate,
-  endDate,
   loading,
   groupBarData = {},
   groupTotals = [],
@@ -21,9 +17,7 @@ const Dashboard = ({
           </div>
         ) : groupTotals && groupTotals.length > 0 ? (
           <>
-            <p>
-              <strong>{view}</strong> View, Campus: {campus} | {startDate || "—"} - {endDate || "—"}
-            </p>
+            <h3>Monthly</h3>
 
             <div style={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
               <DonutChart donutData={groupTotals} grandTotal={grandTotalData} />
