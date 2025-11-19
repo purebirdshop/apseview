@@ -23,8 +23,6 @@ export const fetchDashboardData = async (campus,startDate,endDate) => {
         endDate
       },
     });
-
-    console.log(res.data)
     return res.data;
   } catch (error) {
     console.error('Error fetching dashboard data:', error);

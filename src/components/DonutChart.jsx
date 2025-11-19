@@ -7,6 +7,7 @@ import { COLORS } from "../utils/helper";
 
 
 const CustomTooltip = ({ active, payload }) => {
+  console.log(`payload: `, payload)
   if (active && payload && payload.length) {
     return (
       <div
@@ -18,7 +19,7 @@ const CustomTooltip = ({ active, payload }) => {
           borderRadius: "6px",
         }}
       >
-        <p className="name">{`${payload[0].payload.label} : ${payload[0].value}`}</p>
+        <p className="name">{`${payload[0].payload.groupName} : ${payload[0].value}`}</p>
       </div>
     );
   }
@@ -27,6 +28,7 @@ const CustomTooltip = ({ active, payload }) => {
 
 const DonutChart = ({ donutData, grandTotal, width=400, height=450, isAnimationActive = true }) => {
 
+  console.log(donutData)
   try {
     if (!donutData || donutData.length === 0) return null;
     return (
