@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { verifyUser } from "../services/api";
 
 const Connection = ({ onLogin, user }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +40,7 @@ const Connection = ({ onLogin, user }) => {
       <h2>Sign in with your email</h2>
 
       {user ? (
-        <p>You are now logged in under <strong>{user.email}</strong></p>
+        <p>Redirecting...</p>
       ) : (
         <form onSubmit={handleSubmit}>
           <input
