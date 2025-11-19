@@ -122,6 +122,9 @@ const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
     if (onDateChange) onDateChange(newStartStr, newEndStr);
   }, [user]);
 
+  const onDashboard = location.pathname === "/dashboard";
+  const showDashboardFilters = user && onDashboard;
+
   const publicNav = ["About", "Contact"];
   const authNav = ["Dashboard" , "Services", "Contact"];
   const navItems = user ? authNav : publicNav;
@@ -159,7 +162,7 @@ const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
         <div className="logo-left">
           <img alt="View the Apse" src={logo} />
         </div>
-        {user && (
+        {showDashboardFilters && (
           <div className="nav-center">
             <select name="campus-selector" className="campus-selector" value={selectedCampus || ""} onChange={handleCampusChange} disabled={!campuses.length}>
               {campuses.length > 0 ? (
