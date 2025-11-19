@@ -11,8 +11,8 @@ function Footer() {
 		<div className="footer-spacer"></div>
       <div className="footer-container">
         <div className="footer-links">
-          <Link to="/about" className="footer-link">About</Link>
-          <Link to="/contact" className="footer-link">Contact</Link>
+          {/* <Link to="/about" className="footer-link">About</Link> */}
+          {/* <Link to="/contact" className="footer-link">Contact</Link> */}
           <Link to="/privacy-policy" className="footer-link">Privacy Policy</Link>
           <Link to="/terms-of-service" className="footer-link">Terms of Service</Link>
         </div>

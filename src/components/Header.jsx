@@ -125,7 +125,8 @@ const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
   const onDashboard = location.pathname === "/dashboard";
   const showDashboardFilters = user && onDashboard;
 
-  const publicNav = ["About", "Contact"];
+  // const publicNav = ["About", "Contact"];
+  const publicNav = [];
   const authNav = ["Dashboard" , "Services", "Contact"];
   const navItems = user ? authNav : publicNav;
 
