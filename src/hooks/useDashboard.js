@@ -5,6 +5,7 @@ import { fetchDashboardData } from "../services/api";
 export const useDashboard = (profile) => {
   const location = useLocation();
 
+  console.log(profile);
   const [view, setView] = useState("All");
   const [campus, setCampus] = useState(null);
   const [startDate, setStartDate] = useState(null);
