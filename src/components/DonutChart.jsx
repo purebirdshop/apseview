@@ -35,7 +35,7 @@ const DonutChart = ({ donutData, grandTotal, width=400, height=450, isAnimationA
       <div>
         <h3 className="chart-label">Total Attendance</h3>
 
-        <h1 className="inner-total">{grandTotal}</h1>
+        <h1 className="inner-total">{grandTotal.toLocaleString("en-US")}</h1>
         <PieChart width={width} height={height}>
           <Pie
             data={donutData}

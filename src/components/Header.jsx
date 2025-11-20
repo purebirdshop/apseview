@@ -127,7 +127,8 @@ const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
 
   // const publicNav = ["About", "Contact"];
   const publicNav = [];
-  const authNav = ["Dashboard" , "Services", "Contact"];
+  const authNav = ["Dashboard" , "Services"];
+  // const authNav = ["Dashboard" , "Services", "Contact"];
   const navItems = user ? authNav : publicNav;
 
   const skipped = ["Test", "Mission Valley Campus"];
