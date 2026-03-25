@@ -84,7 +84,6 @@ const GroupBarChart = ({ groupBarData = [], groupName, grandTotal, loading = fal
           />
           <YAxis dataKey="name" hide={true} type="category" />
             {safeData.map((entry, index) => (
-console.log(entry.lookup),
               <Bar
                 dataKey="total"
                 barSize={15}

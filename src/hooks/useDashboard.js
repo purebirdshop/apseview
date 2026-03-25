@@ -22,7 +22,8 @@ export const useDashboard = (profile) => {
     const urlStart = params.get("startDate")
     const urlEnd = params.get("endDate")
 
-    // hardcoded for MVP TODO: need to fix this default campus. This should instead pull the campus from the user's authentication.
+    // TODO: 
+    // hardcoded for MVP, Need to fix this default campus. This should instead pull the campus from the user's authentication.
     // attempted to fix, as profile.campus_id is returning undefined half of the time...
     if (campusParam) {
       setCampus(campusParam);
@@ -35,9 +36,7 @@ export const useDashboard = (profile) => {
     setEndDate(urlEnd);
 
   }, [location.search]);
-  // TODO: Need. to fix this... React Hook useEffect has a missing dependency: 'campus'.
-
-  // Fetch dashboard data when campus/start/endDate change
+  // TODO: confirm hook issue is resolved related to useEffect having a missing dependency: 'campus'.
   useEffect(() => {
     if (location.pathname !== "/dashboard") return;
     if (!campus) return;

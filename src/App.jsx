@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Header from "./components/Header";
 import Connection from "./pages/Connection.jsx";
@@ -22,17 +22,17 @@ const darkTheme = createTheme({
 });
 
 // Protected route
-// const ProtectedRoute = ({ user, initializing, children }) => {
-const ProtectedRoute = ({ children }) => {
-  // const location = useLocation();
+const ProtectedRoute = ({ user, initializing, children }) => {
+// const ProtectedRoute = ({ children }) => {
+  const location = useLocation();
 
-  // if (initializing) {
-  //   return <div>Loading...</div>; // or a spinner
-  // }
+  if (initializing) {
+    return <div>Loading...</div>; // or a spinner
+  }
 
-  // if (!user) {
-  //   return <Navigate to="/login" state={{ from: location }} replace />;
-  // }
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
   return children;
 };
 
@@ -67,8 +67,8 @@ function App() {
         <main className="content">
           <Routes>
             <Route path="/login" element={<Connection user={user} onLogin={connect} />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
+            {/* <Route path="/about" element={<About />} /> */}
+            {/* <Route path="/contact" element={<Contact />} /> */}
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />

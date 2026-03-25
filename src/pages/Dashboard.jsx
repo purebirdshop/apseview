@@ -22,7 +22,6 @@ const Dashboard = ({
   grandTotalData = 0
 }) => {
   const { startDate, endDate  } = useDateController();
-  
   const friendlyStart = friendlyDate(startDate);
   const friendlyEnd = friendlyDate(endDate);
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { fetchCampuses } from "../services/api";
-import { months } from "../utils/helper";
 import logo from "../assets/apse-color-logo.png";
 import "../App.css";
 import MenuDrawer from "./MenuDrawer";

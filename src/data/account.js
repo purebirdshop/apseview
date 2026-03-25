@@ -69,14 +69,14 @@ export const RolePermissions = {
   ],
 
   finance: [
-    // TODO: [IDEA] Limit access to finance specifically, maybe have user approval limited in this way as well.
+    // TODO: Limit access to finance specifically, maybe have user approval limited in this way as well. [IDEA]
     Permissions.VIEW_FINANCIALS,
     Permissions.EDIT_FINANCIALS,
     Permissions.VIEW_REPORTS
   ],
 
   regional: [
-    // TODO: [IDEA] This would also limit access to different campuses or multiple campuses. Need to give a UI for the user to set up regions.
+    // TODO: This would also limit access to different campuses or multiple campuses. Need to give a UI for the user to set up regions. [IDEA]
     Permissions.VIEW_DASHBOARD,
     Permissions.MANAGE_REGIONS,
     Permissions.VIEW_REPORTS

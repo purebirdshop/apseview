@@ -9,7 +9,6 @@ import { CHART_COLORS } from "../utils/helper";
 const DonutChart = ({ donutData, grandTotal, width="100%", height=400 }) => {
 
   try {
-console.log('donutData : ', donutData)
     if (!donutData || donutData.length === 0) return null;
     return (
       <>
