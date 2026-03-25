@@ -1,41 +1,22 @@
 import React from "react";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { COLORS } from "../utils/helper";
+import {
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import { CHART_COLORS } from "../utils/helper";
 
+const DonutChart = ({ donutData, grandTotal, width="100%", height=400 }) => {
 
-// const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AA336A", "#9933FF"];
-
-
-const CustomTooltip = ({ active, payload }) => {
-  console.log(`payload: `, payload)
-  if (active && payload && payload.length) {
-    return (
-      <div
-        className="custom-tooltip"
-        style={{
-          background: "#fff",
-          border: "1px solid #ccc",
-          padding: "10px",
-          borderRadius: "6px",
-        }}
-      >
-        <p className="name">{`${payload[0].payload.groupName} : ${payload[0].value}`}</p>
-      </div>
-    );
-  }
-  return null;
-};
-
-const DonutChart = ({ donutData, grandTotal, width=400, height=450, isAnimationActive = true }) => {
-
-  console.log(donutData)
   try {
+console.log('donutData : ', donutData)
     if (!donutData || donutData.length === 0) return null;
     return (
-      <div>
-        <h3 className="chart-label">Total Attendance</h3>
-
-        <h1 className="inner-total">{grandTotal.toLocaleString("en-US")}</h1>
+      <>
+        <div className="inner-total">
+          <h1 className="pie-label">{grandTotal.toLocaleString("en-US")}</h1>
+          <h3 className="pie-label">Total Attendance</h3>
+        </div>
         <PieChart width={width} height={height}>
           <Pie
             data={donutData}
@@ -43,18 +24,18 @@ const DonutChart = ({ donutData, grandTotal, width=400, height=450, isAnimationA
             nameKey="name"
             cx="50%"
             cy="50%"
+            stroke="#222"
+            strokeWidth={2}
             outerRadius={150}
             innerRadius={105}
             label
           >
             {donutData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell key={`cell-${index}`} fill={CHART_COLORS[entry.lookup]} />
             ))}
           </Pie>
-          <Tooltip content={<CustomTooltip />} isAnimationActive={isAnimationActive} />
-          {/* <Legend /> */}
         </PieChart>
-      </div>
+      </>
     );
   } catch (error) {
     console.error("Error rendering Donut Chart:", error);

@@ -4,14 +4,19 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Cell,
+  LabelList,
   ResponsiveContainer,
 } from "recharts";
-import { COLORS } from "../utils/helper";
 
-const GroupBarChart = ({ groupBarData = [], groupName, loading = false }) => {
+const roundUpNice = (value) => {
+  if (value <= 50) return Math.ceil(value / 5) * 5;
+  if (value <= 200) return Math.ceil(value / 10) * 10;
+  if (value <= 1000) return Math.ceil(value / 50) * 50;
+  return Math.ceil(value / 100) * 100;
+};
+
+import { CHART_COLORS } from "../utils/helper";
+const GroupBarChart = ({ groupBarData = [], groupName, grandTotal, loading = false }) => {
   const capsFirstLetter = (str) => str?.charAt(0).toUpperCase() + str?.slice(1);
 
   // Show loading state
@@ -54,23 +59,46 @@ const GroupBarChart = ({ groupBarData = [], groupName, loading = false }) => {
   // Ensure totals are numeric and valid
   const safeData = groupBarData.map((entry) => ({
     name: entry.name || `Category ${entry.category_id || "N/A"}`,
+    lookup: entry.lookup,
     total: entry.total != null && !isNaN(entry.total) ? entry.total : 0,
   }));
 
   return (
-    <div style={{ marginBottom: "1rem" }}>
+    <div style={{ 
+      backgroundColor:"#444",
+      borderRadius:"10px",
+      marginBottom: "1rem",
+      width:"100%"
+    }}>
       <h3 className="chart-label">{capsFirstLetter(groupName)}</h3>
-      <ResponsiveContainer width="144" height={240}>
-        <BarChart data={safeData} margin={{ top: 48, right: 12, left: 12, bottom: 6 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" hide={true} />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="total" barSize={40}>
+      <ResponsiveContainer width="100%" height="100">
+        <BarChart
+          layout="vertical"
+          background="none"
+          data={safeData}
+          margin={{ top: 18, right: 12, left: 12, bottom: 0 }}
+          >
+          <XAxis
+            domain={[0, roundUpNice(grandTotal)]}
+            type="number"
+          />
+          <YAxis dataKey="name" hide={true} type="category" />
             {safeData.map((entry, index) => (
-              <Cell key={index} fill={COLORS[index % COLORS.length]} />
+console.log(entry.lookup),
+              <Bar
+                dataKey="total"
+                barSize={15}
+                radius={25}
+                key={index}
+                fill={CHART_COLORS[entry.lookup]}
+              >
+                <LabelList
+                  dataKey="total"
+                  position="right"
+                  fill="white"
+                /> 
+              </Bar>
             ))}
-          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

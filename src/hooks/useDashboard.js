@@ -17,10 +17,10 @@ export const useDashboard = (profile) => {
 
   // Extract campus from URL or fallback
   useEffect(() => {
-            const params = new URLSearchParams(location.search);
-            const campusParam = params.get("campus");
-            const urlStart = params.get("startDate")
-            const urlEnd = params.get("endDate")
+    const params = new URLSearchParams(location.search);
+    const campusParam = params.get("campus");
+    const urlStart = params.get("startDate")
+    const urlEnd = params.get("endDate")
 
     // hardcoded for MVP TODO: need to fix this default campus. This should instead pull the campus from the user's authentication.
     // attempted to fix, as profile.campus_id is returning undefined half of the time...
@@ -54,15 +54,19 @@ export const useDashboard = (profile) => {
         Object.entries(records).forEach(([groupName, groupData]) => {
           if (["grand-total", "date_range", "groups"].includes(groupName)) return;
 
-          barData[groupName] = (groupData.allRecords || []).map(r => ({
-            name: r.records.name || `Category ${r.category_id}`,
-            total: r.records["sub-total"] || 0,
-          }));
-
+          barData[groupName] = (groupData.allRecords || []).map(r => (
+            {
+              name: r.records.name || `Category ${r.category_id}`,
+              lookup: groupData.lookup,
+              total: r.records["sub-total"] || 0,
+            }
+          ));
+            
           totals.push({
             groupName,
+            lookup: groupData.lookup,
             total: groupData.total || 0,
-          });
+            });
         });
 
 

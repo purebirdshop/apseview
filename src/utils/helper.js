@@ -15,21 +15,63 @@ export const months = [
 
 // export const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AA336A", "#9933FF"];
 
+export const CHART_COLORS = {
+
+  "auditorium": "#FFC107",
+  "302229": "#FFC107",
+  "kidz": "#2ECC71",
+  "302227": "#2ECC71",
+  "306757": "#2ECC71",
+  "302225": "#2ECC71",
+  "jrHighAwakenYouth": "#E91E63",
+  "304721": "#E91E63",
+  "304720": "#E91E63",
+  "highSchoolTeenagers": "#5B5BFF",
+  "652218": "#5B5BFF",
+  "648461": "#5B5BFF",
+  "highCards": "#FF8A1F",
+  "391753": "#FF8A1F",
+  "644934": "#FF8A1F",
+  "dNAAttendees": "#C13CFF",
+  "633276": "#C13CFF",
+  "302233": "#C13CFF",
+  "assignedVolunteers": "#B8860B",
+  "679252": "#B8860B",
+  "others":[
+    "#5FAE1B",
+    "#FF3B30",
+    "#0B63C7",
+    "#FF5A5F",
+    "#5A189A"
+  ]
+}
+
 export const COLORS = [
-  "#0088FE",
-  "#00C49F",
+  "#FFC107",
+  "#2ECC71",
+  "#E91E63",
+  "#5B5BFF",
+  "#FF8A1F",
+  "#C13CFF",
+  "#B8860B",
+  "#5FAE1B",
+  "#FF3B30",
+  "#0B63C7",
+  "#FF5A5F",
+  "#5A189A"
+  // "#0088FE",
+  // "#00C49F",
   // "#FFBB28",
   // "#FF8042",
   // "#AA336A",
-  "#9933FF",
-  
-  "#eea941",
-  "#b11810",
-  "#fa431b",
-  "#e0ee7d",
-  "#31eae5",
-  "#fcd764",
-  "#10686a",
+  // "#9933FF",
+  // "#eea941",
+  // "#b11810",
+  // "#fa431b",
+  // "#e0ee7d",
+  // "#31eae5",
+  // "#fcd764",
+  // "#10686a",
 ]
 
 export const formatDate = (date) => {
@@ -38,6 +80,14 @@ export const formatDate = (date) => {
   const dd = String(date.getDate()).padStart(2, '0');
   return `${yyyy}-${mm}-${dd}`;
 };
+
+export const friendlyDate = (uglyDate) => {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(uglyDate);
+}
 
 export const formatBlockName = (name) => {
   // Replace dashes with spaces and capitalize each word
@@ -86,9 +136,11 @@ export const sumTotals = (data) => {
 }
 
 export default {
+  CHART_COLORS,
   COLORS,
   capsFirstLetter, 
   formatDate, 
+  friendlyDate,
   formatBlockName, 
   getCurrentMonthYear, 
   buildDateString,

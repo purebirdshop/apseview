@@ -4,213 +4,228 @@ import { fetchCampuses } from "../services/api";
 import { months } from "../utils/helper";
 import logo from "../assets/apse-color-logo.png";
 import "../App.css";
+import MenuDrawer from "./MenuDrawer";
+import { useDateController } from "../hooks/useDateController";
 
-const Header = ({ user, onCampusChange, onDateChange, onLogout }) => {
-  const [activeView, setActiveView] = useState("All");
-  const [campuses, setCampuses] = useState([]);
-  const [selectedCampus, setSelectedCampus] = useState(null);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+const Header = ({ 
+	user,
+	onCampusChange,
+	onDateChange,
+	onLogout
+}) => {
+	const [activeView, setActiveView] = useState("All");
+	const [campuses, setCampuses] = useState([]);
+	const [selectedCampus, setSelectedCampus] = useState(null);
 
-  const navigate = useNavigate();
-  const location = useLocation();
+	const { startDate, endDate, setDates } = useDateController();
+	const navigate = useNavigate();
+	const location = useLocation();
 
-  let navClass;
-  const getCampusFromUrl = () => {
-    const params = new URLSearchParams(location.search);
-    const campus = params.get("campus");
-    return campus ? Number(campus) : null;
-  };
+	let navClass;
+	const getCampusFromUrl = () => {
+		const params = new URLSearchParams(location.search);
+		const campus = params.get("campus");
+		return campus ? Number(campus) : null;
+	};
 
-  const getDateFromUrl = () => {
-    const params = new URLSearchParams(location.search);
-    const start = params.get("startDate");
-    const end = params.get("endDate");
-    return { startDate: start, endDate: end };
-  };
+	const getDateFromUrl = () => {
+		const params = new URLSearchParams(location.search);
+		const start = params.get("startDate");
+		const end = params.get("endDate");
+		return { startDate: start, endDate: end };
+	};
 
-  const updateUrlParams = ({ campus, start, end }) => {
-    const params = new URLSearchParams(location.search);
-    if (campus) params.set("campus", campus);
-    else params.delete("campus");
+	const updateUrlParams = ({ campus, start, end }) => {
+		const params = new URLSearchParams(location.search);
+		if (campus) params.set("campus", campus);
+		else params.delete("campus");
 
-    if (start) params.set("startDate", start);
-    else params.delete("startDate");
+		if (start) params.set("startDate", start);
+		else params.delete("startDate");
 
-    if (end) params.set("endDate", end);
-    else params.delete("endDate");
+		if (end) params.set("endDate", end);
+		else params.delete("endDate");
 
-    navigate({ search: params.toString() }, { replace: true });
-  };
+		navigate({ search: params.toString() }, { replace: true });
+	};
 
-  const handleCampusChange = (e) => {
-    const newCampus = Number(e.target.value);
-    setSelectedCampus(newCampus);
-    updateUrlParams({ campus: newCampus, start: startDate, end: endDate });
-    if (onCampusChange) onCampusChange(newCampus);
-  };
+	const handleCampusChange = (e) => {
+		const newCampus = Number(e.target.value);
+		setSelectedCampus(newCampus);
+		updateUrlParams({ campus: newCampus, start: startDate, end: endDate });
+		if (onCampusChange) onCampusChange(newCampus);
+	};
 
-  const handleMonthChange = (direction) => {
-    if (!startDate) return;
+	const handleMonthChange = (direction) => {
+		if (!startDate) return;
 
-    const [yearStr, monthStr] = startDate.split("-");
-    let year = parseInt(yearStr, 10); 
-    let month = parseInt(monthStr, 10) - 1; // <--- FIX: zero-index
+		const [yearStr, monthStr] = startDate.split("-");
+		let year = parseInt(yearStr, 10); 
+		let month = parseInt(monthStr, 10) - 1; // <--- FIX: zero-index
 
-    month += direction;
+		month += direction;
 
-    if (month < 0) {
-      month = 11;
-      year -= 1;
-    } else if (month > 11) {
-      month = 0;
-      year += 1;
-    }
+		if (month < 0) {
+			month = 11;
+			year -= 1;
+		} else if (month > 11) {
+			month = 0;
+			year += 1;
+		}
 
-    const newStart = new Date(year, month, 1).toISOString().split("T")[0];
-    const newEnd = new Date(year, month + 1, 0).toISOString().split("T")[0];
+		const formatDate = (date) => {
+			const y = date.getFullYear();
+			const m = String(date.getMonth() + 1).padStart(2, "0");
+			const d = String(date.getDate()).padStart(2, "0");
+			return `${y}-${m}-${d}`;
+		};
 
-    setStartDate(newStart);
-    setEndDate(newEnd);
+		const newStart = formatDate(new Date(year, month, 1));
+		const newEnd = formatDate(new Date(year, month + 1, 0));
 
-    updateUrlParams({ campus: selectedCampus, start: newStart, end: newEnd });
-    if (onDateChange) onDateChange(newStart, newEnd);
-  };
+		setDates(newStart, newEnd);
+		if (onDateChange) onDateChange(newStart, newEnd);
+	};
 
 
-  useEffect(() => {
-    const loadCampuses = async () => {
-      try {
-        const result = await fetchCampuses();
-        const campusArray = Array.isArray(result)
-          ? result
-          : result?.records || result?.data || [];
-        setCampuses(campusArray);
-      } catch (err) {
-        console.error("Error loading campuses:", err);
-        setCampuses([]);
-      }
-    };
-    loadCampuses();
-  }, []);
+	useEffect(() => {
+		const loadCampuses = async () => {
+			try {
+				const result = await fetchCampuses();
+				const campusArray = Array.isArray(result)
+					? result
+					: result?.records || result?.data || [];
+				setCampuses(campusArray);
+			} catch (err) {
+				console.error("Error loading campuses:", err);
+				setCampuses([]);
+			}
+		};
+		loadCampuses();
+	}, []);
 
-  useEffect(() => {
-    const urlCampus = getCampusFromUrl();
-    const { startDate: urlStart, endDate: urlEnd } = getDateFromUrl();
+	useEffect(() => {
+		const urlCampus = getCampusFromUrl();
+		const { startDate: urlStart, endDate: urlEnd } = getDateFromUrl();
 
-    if (urlCampus) setSelectedCampus(urlCampus);
-    else if (user?.campus_id) setSelectedCampus(user.campus_id);
+		if (urlCampus) setSelectedCampus(urlCampus);
+		else if (user?.campus_id) setSelectedCampus(user.campus_id);
 
-    const now = new Date();
-    let initialStart = urlStart
-      ? new Date(urlStart)
-      : new Date(now.getFullYear(), now.getMonth(), 1);
-    let initialEnd = urlEnd
-      ? new Date(urlEnd)
-      : new Date(initialStart.getFullYear(), initialStart.getMonth() + 1, 0);
+		const now = new Date();
 
-    if (initialEnd.getFullYear() !== initialStart.getFullYear() || initialEnd.getMonth() !== initialStart.getMonth()) {
-      initialEnd = new Date(initialStart.getFullYear(), initialStart.getMonth() + 1, 0);
-    }
+		let initialStart = urlStart
+			? new Date(urlStart)
+			: new Date(now.getFullYear(), now.getMonth(), 1);
 
-    const newStartStr = initialStart.toISOString().split("T")[0];
-    const newEndStr = initialEnd.toISOString().split("T")[0];
+		let initialEnd = urlEnd
+			? new Date(urlEnd)
+			: new Date(initialStart.getFullYear(), initialStart.getMonth() + 1, 0);
 
-    setStartDate(newStartStr);
-    setEndDate(newEndStr);
+		if (
+			initialEnd.getFullYear() !== initialStart.getFullYear() ||
+			initialEnd.getMonth() !== initialStart.getMonth()
+		) {
+			initialEnd = new Date(initialStart.getFullYear(), initialStart.getMonth() + 1, 0);
+		}
 
-    if (onDateChange) onDateChange(newStartStr, newEndStr);
-  }, [user]);
+		const newStartStr = initialStart.toISOString().split("T")[0];
+		const newEndStr = initialEnd.toISOString().split("T")[0];
 
-  const onDashboard = location.pathname === "/dashboard";
-  const showDashboardFilters = user && onDashboard;
+		setDates(newStartStr, newEndStr);
+		if (onDateChange) onDateChange(newStartStr, newEndStr);
+	}, [user]);
 
-  // const publicNav = ["About", "Contact"];
-  const publicNav = [];
-  const authNav = ["Dashboard" , "Services"];
-  // const authNav = ["Dashboard" , "Services", "Contact"];
-  const navItems = user ? authNav : publicNav;
+	const onDashboard = location.pathname === "/dashboard";
+	const showDashboardFilters = user && onDashboard;
 
-  const skipped = ["Test", "Mission Valley Campus"];
+	const publicNav = [];
+	const authNav = ["Dashboard" , "Services"];
+	const navItems = user ? authNav : publicNav;
 
-  const handleViewClick = (view) => {
-    setActiveView(view);
+	const skipped = ["Test", "Mission Valley Campus"];
 
-    const routeMap = {
-      About: "/about",
-      Contact: "/contact",
-	    Services: "/services",
-      Dashboard: "/dashboard",
-    };
+	const handleViewClick = (view) => {
+		setActiveView(view);
 
-    const path = routeMap[view];
-    if (path) navigate(path);
-  };
+		const routeMap = {
+			About: "/about",
+			Contact: "/contact",
+			Services: "/services",
+			Dashboard: "/dashboard",
+		};
 
-  const handleConnectClick = () => {
-    if (user) {
-      if (onLogout) onLogout();
-      navigate("/connection");
-    } else {
-      navigate("/connection");
-    }
-  };
+		const path = routeMap[view];
+		if (path) navigate(path);
+	};
 
-	{user ? navClass="nav-button log-out" : navClass="nav-button  log-in"}
+	const handleConnectClick = () => {
+		if (user) {
+			if (onLogout) onLogout();
+			navigate("/connection");
+		} else {
+			navigate("/connection");
+		}
+	};
 
-  return (
-    <header className="header">
-      <nav className="nav">
-        <div className="logo-left">
-          <img alt="View the Apse" src={logo} />
-        </div>
-        {showDashboardFilters && (
-          <div className="nav-center">
-            <select name="campus-selector" className="campus-selector" value={selectedCampus || ""} onChange={handleCampusChange} disabled={!campuses.length}>
-              {campuses.length > 0 ? (
-                campuses
-                  .filter((campus) => !skipped.includes(campus.name))
-                  .map((campus) => (
-                    <option key={campus.id || campus.metrics.id} value={campus.metrics?.id || campus.id}>
-                      {campus.name}
-                    </option>
-                  ))
-              ) : (
-                <option disabled>Loading Campuses...</option>
-              )}
-            </select>
+	{user ? navClass="nav-button log-out" : navClass="nav-button	log-in"}
 
-            <div className="month-selector">
-              <button onClick={() => handleMonthChange(-1)}>&lt;</button>
-              <span style={{ padding: "10px" }}>
-                {`${months[new Date(startDate).getUTCMonth()]} ${new Date(startDate).getFullYear()}`}
-              </span>
-              <button onClick={() => handleMonthChange(1)}>&gt;</button>
-            </div>
-          </div>
-        )}
+	return (
+		<header className="header">
+			<nav className="nav">
+				<div className="logo-left">
+					<img alt="View the Apse" src={logo} />
+				</div>
+				{showDashboardFilters && (
+					<div className="nav-center">
+						<select name="campus-selector" className="campus-selector" value={selectedCampus || ""} onChange={handleCampusChange} disabled={!campuses.length}>
+							{campuses.length > 0 ? (
+								campuses
+									.filter((campus) => !skipped.includes(campus.name))
+									.map((campus) => (
+										<option key={campus.id || campus.metrics.id} value={campus.metrics?.id || campus.id}>
+											{campus.name}
+										</option>
+									))
+							) : (
+								<option disabled>Loading Campuses...</option>
+							)}
+						</select>
 
-        <div className="nav-right">
-          {navItems.map((view) => (
-            <button
-              key={view}
-              className={`nav-button ${activeView === view ? "active" : ""}`}
-              onClick={() => handleViewClick(view)}
-            >
-              {view}
-            </button>
-          ))}
+						{/* <div className="month-selector">
+							<button className="monthly-back" onClick={() => handleMonthChange(-1)}>&lt;</button>
+							<span className="month-title">
+								{`${months[new Date(startDate).getUTCMonth()]} ${new Date(startDate).getFullYear()}`}
+							</span>
+							<button className="monthly-forward" onClick={() => handleMonthChange(1)}>&gt;</button>
+						</div> */}
+					</div>
+				)}
+				{/* <button className="nav-hamburger" endIcon={<MenuIcon />} ></button> */}
+				<MenuDrawer
+					user={user}
+					onLogout={onLogout}
+				/>
+				<div className="nav-right">
+					{navItems.map((view) => (
+						<button
+							key={view}
+							className={`nav-button ${activeView === view ? "active" : ""}`}
+							onClick={() => handleViewClick(view)}
+						>
+							{view}
+						</button>
+					))}
 
-          <button
-          className={navClass}
-          onClick={handleConnectClick}
-          >
-          {user ? "Log Out" : "Log In"}
-          </button>
-        </div>
-      </nav>
-    </header>
-  );
+					<button
+					className={navClass}
+					onClick={handleConnectClick}
+					>
+					{user ? "Log Out" : "Log In"}
+					</button>
+				</div>
+			</nav>
+		</header>
+	);
 };
 
 export default Header;
